@@ -10,9 +10,13 @@
     <li>make this square a picture.</li>
     <li>Make several squares that will simulate a chessboard.</li>
     <li>Draw chess figures.</li>
-    <li>Create a function, which will return a list of all possible moves depending on the position of all the figures and the figure itself.</li>
-    <li>If we have time, come up with some features.</li>
 </ol>
+<h3>Then, we need to write some logic:</h3>
+<ol>
+    <li>Create a function, which will return a list of all possible moves depending on the position of all the figures and the figure itself.</li>
+    <li>Allow users to set a figure were he wants.</li>
+</ol>
+<h3>If we'll have time, come up with some features.</h3>
 
 <h4>Usefull links:</h4>
 <ul>
