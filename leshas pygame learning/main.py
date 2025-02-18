@@ -6,7 +6,7 @@ sc = pygame.display.set_mode((500, 500))
 w, h = pygame.display.get_surface().get_size()
 
 square_size = 200
-x = 20
+x = square_size // 2
 y = h // 2
 direction = False
 
