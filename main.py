@@ -39,3 +39,4 @@ while True:
             rect = pygame.draw.rect(sc, 'white', (sq_x + min(size) // 8 * x + space, sq_y + min(size) // 8 * y + space, min(size) // 8 - space, min(size) // 8 - space))
 
     pygame.display.update()
+
