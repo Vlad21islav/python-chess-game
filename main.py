@@ -22,17 +22,22 @@ def possible_moves():
             ]
             for direction in directions:
                 pos = 1
-                try:
-                    while field[y + pos * direction[1]][x + pos * direction[0]][0] != turn:
-                        if (x + pos * direction[0]) < 0 or (y + pos * direction[1]) < 0:
-                            break
-                        highlighted.append([x + pos * direction[0], y + pos * direction[1]])
-                        pos += 1
-                        if field[y + pos * direction[1]][x + pos * direction[0]][0] != turn and field[y + pos * direction[1]][x + pos * direction[0]][0] != '.':
-                            highlighted.append([x + pos * direction[0], y + pos * direction[1]])
-                            break
-                except IndexError:
-                    pass
+                while True:
+                    new_x = x + pos * direction[0]
+                    new_y = y + pos * direction[1]
+
+                    if new_x < 0 or new_x >= 8 or new_y < 0 or new_y >= 8:
+                        break
+
+                    if field[new_y][new_x][0] == '.':
+                        highlighted.append([new_x, new_y])
+                    elif field[new_y][new_x][0] != turn:
+                        highlighted.append([new_x, new_y])
+                        break
+                    else:
+                        break
+                    pos += 1
+
         case 'Knight':
             new_positions = [
                 [1, -2],
@@ -62,17 +67,21 @@ def possible_moves():
             ]
             for direction in directions:
                 pos = 1
-                try:
-                    while field[y + pos * direction[1]][x + pos * direction[0]][0] != turn:
-                        if (x + pos * direction[0]) < 0 or (y + pos * direction[1]) < 0:
-                            break
-                        highlighted.append([x + pos * direction[0], y + pos * direction[1]])
-                        pos += 1
-                        if field[y + pos * direction[1]][x + pos * direction[0]][0] != turn and field[y + pos * direction[1]][x + pos * direction[0]][0] != '.':
-                            highlighted.append([x + pos * direction[0], y + pos * direction[1]])
-                            break
-                except IndexError:
-                    pass
+                while True:
+                    new_x = x + pos * direction[0]
+                    new_y = y + pos * direction[1]
+
+                    if new_x < 0 or new_x >= 8 or new_y < 0 or new_y >= 8:
+                        break
+
+                    if field[new_y][new_x][0] == '.':
+                        highlighted.append([new_x, new_y])
+                    elif field[new_y][new_x][0] != turn:
+                        highlighted.append([new_x, new_y])
+                        break
+                    else:
+                        break
+                    pos += 1
         case 'Queen':
             directions = [
                 [1, 1],
@@ -86,17 +95,21 @@ def possible_moves():
             ]
             for direction in directions:
                 pos = 1
-                try:
-                    while field[y + pos * direction[1]][x + pos * direction[0]][0] != turn:
-                        if (x + pos * direction[0]) < 0 or (y + pos * direction[1]) < 0:
-                            break
-                        highlighted.append([x + pos * direction[0], y + pos * direction[1]])
-                        pos += 1
-                        if field[y + pos * direction[1]][x + pos * direction[0]][0] != turn and field[y + pos * direction[1]][x + pos * direction[0]][0] != '.':
-                            highlighted.append([x + pos * direction[0], y + pos * direction[1]])
-                            break
-                except IndexError:
-                    pass
+                while True:
+                    new_x = x + pos * direction[0]
+                    new_y = y + pos * direction[1]
+
+                    if new_x < 0 or new_x >= 8 or new_y < 0 or new_y >= 8:
+                        break
+
+                    if field[new_y][new_x][0] == '.':
+                        highlighted.append([new_x, new_y])
+                    elif field[new_y][new_x][0] != turn:
+                        highlighted.append([new_x, new_y])
+                        break
+                    else:
+                        break
+                    pos += 1
         case 'King':
             new_positions = [
                 [1, 1],
@@ -132,21 +145,25 @@ def possible_moves():
                     new_positions.append([0, 2])
 
             for pos in new_positions:
-                try:
-                    if figure[0] == 'W' and field[y - 1][x - 1][0] != turn and field[y - 1][x - 1][0] != '.':
-                        highlighted.append([x - 1, y - 1])
-                    if figure[0] == 'W' and field[y - 1][x + 1][0] != turn and field[y - 1][x + 1][0] != '.':
-                        highlighted.append([x + 1, y - 1])
-                    if figure[0] == 'B' and field[y + 1][x + 1][0] != turn and field[y + 1][x + 1][0] != '.':
-                        highlighted.append([x + 1, y + 1])
-                    if figure[0] == 'B' and field[y + 1][x - 1][0] != turn and field[y + 1][x - 1][0] != '.':
-                        highlighted.append([x - 1, y + 1])
-                    if x + pos[0] < 0 or y + pos[1] < 0 or field[y + pos[1]][x + pos[0]][0] != '.':
-                        break
-                    else:
-                        highlighted.append([x + pos[0], y + pos[1]])
-                except IndexError:
-                    pass
+                new_x = x + pos[0]
+                new_y = y + pos[1]
+
+                if 0 <= new_x < 8 and 0 <= new_y < 8:
+                    if field[new_y][new_x][0] == '.':
+                        highlighted.append([new_x, new_y])
+
+                if figure[0] == 'W':
+                    if new_y == y - 1:
+                        if x - 1 >= 0 and field[new_y][new_x - 1][0] != '.' and field[new_y][new_x - 1][0] != turn:
+                            highlighted.append([new_x - 1, new_y])
+                        if x + 1 < 8 and field[new_y][new_x + 1][0] != '.' and field[new_y][new_x + 1][0] != turn:
+                            highlighted.append([new_x + 1, new_y])
+                else:
+                    if new_y == y + 1:
+                        if x - 1 >= 0 and field[new_y][new_x - 1][0] != '.' and field[new_y][new_x - 1][0] != turn:
+                            highlighted.append([new_x - 1, new_y])
+                        if x + 1 < 8 and field[new_y][new_x + 1][0] != '.' and field[new_y][new_x + 1][0] != turn:
+                            highlighted.append([new_x + 1, new_y])
 
 
 field = [['B_Rook', 'B_Knight', 'B_Bishop', 'B_Queen', 'B_King', 'B_Bishop', 'B_Knight', 'B_Rook'],
@@ -167,6 +184,8 @@ turn = 'W'
 selected_figure = '.'
 
 space = 0
+
+game_is_over = False
 
 while True:
     if size != pygame.display.get_window_size():
@@ -215,7 +234,7 @@ while True:
                 color = (43, 53, 61)
 
             rect = pygame.draw.rect(sc, color, (field_x + min(size) // 8 * x + space, field_y + min(size) // 8 * y + space, min(size) // 8 - space, min(size) // 8 - space))
-            if rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and field[y][x][0] == turn:
+            if rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and field[y][x][0] == turn and not game_is_over:
                 selected_figure = [field[y][x], [x, y]]
                 possible_moves()
 
@@ -223,8 +242,14 @@ while True:
                 if (i[0], i[1]) == (x, y):
                     rect = pygame.draw.rect(sc, 'green', (field_x + min(size) // 8 * i[0] + space, field_y + min(size) // 8 * i[1] + space, min(size) // 8 - space, min(size) // 8 - space))
 
-                    if rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and field[i[1]][i[0]][0] != turn:
-                        print(selected_figure[0], selected_figure[1][1])
+                    if rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and field[i[1]][i[0]][0] != turn and not game_is_over:
+                        print(selected_figure[0], selected_figure[1][0], selected_figure[1][1])
+                        try:
+                            if field[i[1]][i[0]][2:] == 'King':
+                                game_is_over = True
+                                highlighted.clear()
+                        except IndexError:
+                            pass
                         if selected_figure[0] == 'W_Pawn' and selected_figure[1][1] == 1:
                             field[i[1]][i[0]] = 'W_Queen'
                         elif selected_figure[0] == 'B_Pawn' and selected_figure[1][1] == 6:
