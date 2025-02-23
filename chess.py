@@ -1,8 +1,20 @@
+import os
 import pygame
 import sys
 
 pygame.init()
 sc = pygame.display.set_mode((500, 500), flags=pygame.RESIZABLE)
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
+
+pygame.display.set_caption('Chess')
+icon = pygame.image.load(resource_path('images/icon.jpg')).convert_alpha()
+pygame.display.set_icon(icon)
 size = (0, 0)
 
 
@@ -220,18 +232,19 @@ while True:
 
         path = 'images/figures/'
 
-        W_King = pygame.transform.scale(pygame.image.load(path + 'W_King.png'), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
-        W_Queen = pygame.transform.scale(pygame.image.load(path + 'W_Queen.png'), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
-        W_Rook = pygame.transform.scale(pygame.image.load(path + 'W_Rook.png'), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
-        W_Knight = pygame.transform.scale(pygame.image.load(path + 'W_Knight.png'), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
-        W_Bishop = pygame.transform.scale(pygame.image.load(path + 'W_Bishop.png'), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
-        W_Pawn = pygame.transform.scale(pygame.image.load(path + 'W_Pawn.png'), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
-        B_King = pygame.transform.scale(pygame.image.load(path + 'B_King.png'), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
-        B_Queen = pygame.transform.scale(pygame.image.load(path + 'B_Queen.png'), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
-        B_Rook = pygame.transform.scale(pygame.image.load(path + 'B_Rook.png'), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
-        B_Knight = pygame.transform.scale(pygame.image.load(path + 'B_Knight.png'), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
-        B_Bishop = pygame.transform.scale(pygame.image.load(path + 'B_Bishop.png'), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
-        B_Pawn = pygame.transform.scale(pygame.image.load(path + 'B_Pawn.png'), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        W_King = pygame.transform.scale(pygame.image.load(resource_path(path + 'W_King.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        W_Queen = pygame.transform.scale(pygame.image.load(resource_path(path + 'W_Queen.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        W_Rook = pygame.transform.scale(pygame.image.load(resource_path(path + 'W_Rook.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        W_Knight = pygame.transform.scale(pygame.image.load(resource_path(path + 'W_Knight.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        W_Bishop = pygame.transform.scale(pygame.image.load(resource_path(path + 'W_Bishop.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        W_Pawn = pygame.transform.scale(pygame.image.load(resource_path(path + 'W_Pawn.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        B_King = pygame.transform.scale(pygame.image.load(resource_path(path + 'B_King.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        B_Queen = pygame.transform.scale(pygame.image.load(resource_path(path + 'B_Queen.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        B_Rook = pygame.transform.scale(pygame.image.load(resource_path(path + 'B_Rook.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        B_Knight = pygame.transform.scale(pygame.image.load(resource_path(path + 'B_Knight.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        B_Bishop = pygame.transform.scale(pygame.image.load(resource_path(path + 'B_Bishop.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        B_Pawn = pygame.transform.scale(pygame.image.load(resource_path(path + 'B_Pawn.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
+        print(resource_path(path + 'B_Pawn.png'))
 
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
@@ -254,9 +267,9 @@ while True:
                     if x == 0:
                         figure_moved['Rook'][selected_figure[0][0]][0] = True
                         figure_moved['King'][selected_figure[0][0]] = True
-                        field[y][1] = selected_figure[0]
+                        field[y][2] = selected_figure[0]
                         field[selected_figure[1][1]][selected_figure[1][0]] = '.'
-                        field[y][2] = field[y][x]
+                        field[y][3] = field[y][x]
                         field[y][x] = '.'
                     elif x == 7:
                         figure_moved['Rook'][selected_figure[0][0]][1] = True
