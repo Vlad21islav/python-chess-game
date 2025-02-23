@@ -122,6 +122,11 @@ def possible_moves():
                 [0, -1]
             ]
 
+            if not figure_moved['King'][figure[0]] and field[y][5] == '.' and field[y][6] == '.' and not figure_moved['Rook'][figure[0]][1]:
+                highlighted.append([7, y])
+            if not figure_moved['King'][figure[0]] and field[y][3] == '.' and field[y][2] == '.' and field[y][1] == '.' and not figure_moved['Rook'][figure[0]][0]:
+                highlighted.append([0, y])
+
             for pos in new_positions:
                 try:
                     if x + pos[0] < 0 or y + pos[1] < 0 or field[y + pos[1]][x + pos[0]][0] == turn:
@@ -182,6 +187,16 @@ highlighted = []
 
 turn = 'W'
 selected_figure = '.'
+figure_moved = {
+    'Rook': {
+        'W': [False, False],
+        'B': [False, False]
+    },
+    'King': {
+        'W': False,
+        'B': False
+    }
+}
 
 space = 0
 
@@ -235,15 +250,37 @@ while True:
 
             rect = pygame.draw.rect(sc, color, (field_x + min(size) // 8 * x + space, field_y + min(size) // 8 * y + space, min(size) // 8 - space, min(size) // 8 - space))
             if rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and field[y][x][0] == turn and not game_is_over:
-                selected_figure = [field[y][x], [x, y]]
-                possible_moves()
+                if selected_figure[0][2:] == 'King' and field[y][x][2:] == 'Rook' and [x, y] in highlighted:
+                    if x == 0:
+                        figure_moved['Rook'][selected_figure[0][0]][0] = True
+                        figure_moved['King'][selected_figure[0][0]] = True
+                        field[y][1] = selected_figure[0]
+                        field[selected_figure[1][1]][selected_figure[1][0]] = '.'
+                        field[y][2] = field[y][x]
+                        field[y][x] = '.'
+                    elif x == 7:
+                        figure_moved['Rook'][selected_figure[0][0]][1] = True
+                        figure_moved['King'][selected_figure[0][0]] = True
+                        field[y][6] = selected_figure[0]
+                        field[selected_figure[1][1]][selected_figure[1][0]] = '.'
+                        field[y][5] = field[y][x]
+                        field[y][x] = '.'
+
+                    if turn == 'W':
+                        turn = 'B'
+                    else:
+                        turn = 'W'
+                    highlighted.clear()
+                else:
+                    selected_figure = [field[y][x], [x, y]]
+                    possible_moves()
 
             for i in highlighted:
                 if (i[0], i[1]) == (x, y):
                     rect = pygame.draw.rect(sc, 'green', (field_x + min(size) // 8 * i[0] + space, field_y + min(size) // 8 * i[1] + space, min(size) // 8 - space, min(size) // 8 - space))
 
-                    if rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and field[i[1]][i[0]][0] != turn and not game_is_over:
-                        print(selected_figure[0], selected_figure[1][0], selected_figure[1][1])
+                    if rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and field[i[1]][i[0]][0] != selected_figure[0][0] and not game_is_over:
+                        print(selected_figure[0], i[0], i[1])
                         try:
                             if field[i[1]][i[0]][2:] == 'King':
                                 game_is_over = True
@@ -257,6 +294,15 @@ while True:
                         else:
                             field[i[1]][i[0]] = selected_figure[0]
                         field[selected_figure[1][1]][selected_figure[1][0]] = '.'
+
+                        if selected_figure[0][2:] == 'Rook':
+                            if selected_figure[1][0] == 0:
+                                figure_moved['Rook'][selected_figure[0][0]][0] = True
+                            if selected_figure[1][0] == 7:
+                                figure_moved['Rook'][selected_figure[0][0]][1] = True
+                        elif selected_figure[0][2:] == 'King':
+                            figure_moved['King'][selected_figure[0][0]] = True
+
                         if turn == 'W':
                             turn = 'B'
                         else:
