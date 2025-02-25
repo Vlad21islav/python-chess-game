@@ -1,4 +1,5 @@
 import os
+import time
 import pygame
 import sys
 
@@ -8,7 +9,7 @@ sc = pygame.display.set_mode((500, 500), flags=pygame.RESIZABLE)
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
-    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    base_path = getattr(sys, '_MEI PASS', os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
 
@@ -209,10 +210,12 @@ figure_moved = {
         'B': False
     }
 }
+pawn_transformation = ['Queen', 'Rook', 'Bishop', 'Knight']
 
 space = 0
 
 game_is_over = False
+sc.fill((29, 32, 37))
 
 while True:
     if size != pygame.display.get_window_size():
@@ -246,11 +249,6 @@ while True:
         B_Pawn = pygame.transform.scale(pygame.image.load(resource_path(path + 'B_Pawn.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
         print(resource_path(path + 'B_Pawn.png'))
 
-    for i in pygame.event.get():
-        if i.type == pygame.QUIT:
-            sys.exit()
-
-    sc.fill((29, 32, 37))
     mouse = pygame.mouse.get_pos()
 
     for x in range(8):
@@ -300,13 +298,53 @@ while True:
                                 highlighted.clear()
                         except IndexError:
                             pass
-                        if selected_figure[0] == 'W_Pawn' and selected_figure[1][1] == 1:
-                            field[i[1]][i[0]] = 'W_Queen'
-                        elif selected_figure[0] == 'B_Pawn' and selected_figure[1][1] == 6:
-                            field[i[1]][i[0]] = 'B_Queen'
-                        else:
-                            field[i[1]][i[0]] = selected_figure[0]
+
+                        field[i[1]][i[0]] = selected_figure[0]
                         field[selected_figure[1][1]][selected_figure[1][0]] = '.'
+                        if selected_figure[0] == 'W_Pawn' and selected_figure[1][1] == 1 or selected_figure[0] == 'B_Pawn' and selected_figure[1][1] == 6:
+                            time.sleep(0.5)
+                            last_pressed = True
+                            selecting = True
+                            while selecting:
+                                mouse = pygame.mouse.get_pos()
+
+                                if selected_figure[0][0] == 'W':
+                                    direction = 1
+                                else:
+                                    direction = -1
+                                for figure in range(len(pawn_transformation)):
+                                    rect = pygame.draw.rect(sc, 'white', (field_x + min(size) // 8 * i[0] + space, field_y + min(size) // 8 * (i[1] + figure * direction) + space,
+                                                                          min(size) // 8 - space, min(size) // 8 - space))
+                                    match selected_figure[0][0] + '_' + pawn_transformation[figure]:
+                                        case 'W_Queen':
+                                            image = W_Queen
+                                        case 'W_Rook':
+                                            image = W_Rook
+                                        case 'W_Knight':
+                                            image = W_Knight
+                                        case 'W_Bishop':
+                                            image = W_Bishop
+
+                                        case 'B_Queen':
+                                            image = B_Queen
+                                        case 'B_Rook':
+                                            image = B_Rook
+                                        case 'B_Knight':
+                                            image = B_Knight
+                                        case 'B_Bishop':
+                                            image = B_Bishop
+
+                                    sc.blit(image, (field_x + min(size) // 8 * i[0] + space + (min(size) // 8 - space) // 4, field_y + min(size) // 8 * (i[1] + figure * direction)))
+
+                                    if rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and not last_pressed:
+                                        field[i[1]][i[0]] = selected_figure[0][0] + '_' + pawn_transformation[figure]
+                                        selecting = False
+                                    else:
+                                        last_pressed = False
+                                pygame.display.update()
+                                for _ in pygame.event.get():
+                                    if _.type == pygame.QUIT:
+                                        sys.exit()
 
                         if selected_figure[0][2:] == 'Rook':
                             if selected_figure[1][0] == 0:
@@ -357,3 +395,6 @@ while True:
                 sc.blit(image, (field_x + min(size) // 8 * x + space + (min(size) // 8 - space) // 4, field_y + min(size) // 8 * y))
 
     pygame.display.update()
+    for _ in pygame.event.get():
+        if _.type == pygame.QUIT:
+            sys.exit()
