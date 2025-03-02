@@ -23,3 +23,9 @@
     <li><a href="https://younglinux.info/pygame/draw">Pygame draw</a></li>
     <li><a href="https://www.pixilart.com/draw?ref=home-page#">Pixelart</a> (to go to the website you should use VPN)</li>
 </ul>
+
+<img src="images/screenshots/1.png" />
+<h4>Possible moves turn red, which indicates the danger of the king.</h4>
+<img src="images/screenshots/2.png" />
+<h4>Castling is possible.</h4>
+<img src="images/screenshots/3.png" />
