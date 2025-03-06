@@ -10,8 +10,8 @@ pygame.init()
 sc = pygame.display.set_mode((500, 500), flags=pygame.RESIZABLE)
 
 
-# Функция для получения абсолютного пути к файлам (учитывает как режим разработки, так и работу через PyInstaller)
 def resource_path(relative_path):
+    """Функция для получения абсолютного пути к файлам (учитывает как режим разработки, так и работу через PyInstaller)"""
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))  # Проверка, что мы не в PyInstaller
     return os.path.join(base_path, relative_path)
 
@@ -166,7 +166,7 @@ def possible_moves(figure):
 
                 # Проверка на допустимость перемещения по вертикали
                 if 0 <= new_x < 8 and 0 <= new_y < 8:
-                    if field[new_y][new_x][0] == '.':
+                    if abs(pos[1]) == 1 and field[new_y][new_x][0] == '.' or abs(pos[1]) == 2 and field[y + pos[1] // 2][x + pos[0] // 2][0] == '.' and field[new_y][new_x][0] == '.':
                         highlighted.append([new_x, new_y])
 
                 # Проверка на взятие пешки по диагонали
@@ -188,7 +188,10 @@ def is_under_attack():
     """Функция для проверки, под атакой ли король"""
     king_row, king_col = king  # Получаем текущие координаты короля
 
+    # Направления для ферзя, ладьи и слона
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+
+    # Проверка угрозы от ферзя, слона и ладьи
     for direction in directions:
         row, col = king_row, king_col
         while 0 <= row < 8 and 0 <= col < 8:
@@ -197,12 +200,15 @@ def is_under_attack():
             if 0 <= row < 8 and 0 <= col < 8:
                 piece = field[col][row]
                 if piece != '.':
-                    if piece == f'{enemy_turn}_Queen' or \
-                            (piece == f'{enemy_turn}_Rook' and direction in [(-1, 0), (1, 0), (0, -1), (0, 1)]) or \
-                            (piece == f'{enemy_turn}_Bishop' and direction in [(-1, -1), (-1, 1), (1, -1), (1, 1)]):
+                    if piece == f'{enemy_turn}_Queen':  # Ферзь
                         return True
-                    break
+                    if piece == f'{enemy_turn}_Rook' and direction in [(-1, 0), (1, 0), (0, -1), (0, 1)]:  # Ладья
+                        return True
+                    if piece == f'{enemy_turn}_Bishop' and direction in [(-1, -1), (-1, 1), (1, -1), (1, 1)]:  # Слон
+                        return True
+                    break  # Если встретили другую фигуру, выходим из цикла
 
+    # Проверка угрозы от коня
     knight_moves = [(-2, -1), (-1, -2), (1, -2), (2, -1), (2, 1), (1, 2), (-1, 2), (-2, 1)]
     for move in knight_moves:
         row, col = king_row + move[0], king_col + move[1]
@@ -210,7 +216,8 @@ def is_under_attack():
             if field[col][row] == f'{enemy_turn}_Knight':
                 return True
 
-    pawn_directions = [(-1, -1), (-1, 1)] if enemy_turn == 'B' else [(1, -1), (1, 1)]
+    # Проверка угрозы от пешки
+    pawn_directions = [(-1, -1), (1, -1)] if turn == 'W' else [(-1, 1), (1, 1)]  # В зависимости от цвета пешки
     for direction in pawn_directions:
         row, col = king_row + direction[0], king_col + direction[1]
         if 0 <= row < 8 and 0 <= col < 8:
@@ -305,7 +312,7 @@ while True:
         B_Bishop = pygame.transform.scale(pygame.image.load(resource_path(path + 'B_Bishop.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
         B_Pawn = pygame.transform.scale(pygame.image.load(resource_path(path + 'B_Pawn.png')), ((min(size) // 8 - space) // 2, min(size) // 8 - space))
         White_won = pygame.transform.scale(pygame.image.load(resource_path('images/white_won.png')), (min(size), min(size)))
-        Black_won = pygame.transform.scale(pygame.image.load(resource_path('images/white_won.png')), (min(size), min(size)))
+        Black_won = pygame.transform.scale(pygame.image.load(resource_path('images/black_won.png')), (min(size), min(size)))
         Close = pygame.transform.scale(pygame.image.load(resource_path('images/close.png')), (min(size) // 15, min(size) // 15))
 
         # Печатаем путь к изображению одной из фигур для отладки
@@ -329,26 +336,6 @@ while True:
 
             # Проверяем, была ли нажата мышь на клетке с фигурой текущего игрока
             if rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and field[y][x][0] == turn and not game_is_over:
-                king = [0, 0]
-
-                # Находим позицию короля
-                for figure_x in range(8):
-                    for figure_y in range(8):
-                        if field[figure_y][figure_x] == turn + '_' + 'King':
-                            king = [figure_x, figure_y]
-
-                check = False
-
-                # Проверяем, находится ли король под атакой
-                for figure_x in range(8):
-                    for figure_y in range(8):
-                        if field[figure_y][figure_x][0] != turn and field[figure_y][figure_x][0] != '.':
-                            if turn == 'W':
-                                enemy_turn = 'B'
-                            else:
-                                enemy_turn = 'W'
-                            if is_under_attack():
-                                check = True
 
                 # Если выбрана фигура короля, проверяем возможность рокировки
                 if selected_figure[0][2:] == 'King' and field[y][x][2:] == 'Rook' and [x, y] in highlighted:
@@ -382,17 +369,35 @@ while True:
             # Отображаем возможные ходы фигуры
             for i in highlighted:
                 if (i[0], i[1]) == (x, y):
-                    # Если король под атакой, выделяем клетку красным
-                    if not check:
-                        color = 'green'  # Зеленая клетка для возможного хода
-                    else:
-                        color = 'red'  # Красная клетка, если ход опасен
+                    color = 'green'  # свободная клетка зелёная
 
-                    # Рисуем выделение клетки
-                    rect = pygame.draw.rect(sc, color, (field_x + min(size) // 8 * i[0] + space, field_y + min(size) // 8 * i[1] + space, min(size) // 8 - space, min(size) // 8 - space))
+                    # Рисуем выделение клетки если они безопасные
+                    rect = ''
+                    figure_under_highlight = field[i[1]][i[0]]
+                    field[selected_figure[1][1]][selected_figure[1][0]] = figure_under_highlight
+                    field[i[1]][i[0]] = selected_figure[0]
+
+                    king = [0, 0]
+
+                    # Находим позицию короля
+                    for figure_x in range(8):
+                        for figure_y in range(8):
+                            if field[figure_y][figure_x] == turn + '_' + 'King':
+                                king = [figure_x, figure_y]
+
+                    if turn == 'W':
+                        enemy_turn = 'B'
+                    else:
+                        enemy_turn = 'W'
+
+                    if field[selected_figure[1][1]][selected_figure[1][0]] == field[i[1]][i[0]] or not is_under_attack():
+                        rect = pygame.draw.rect(sc, color, (field_x + min(size) // 8 * i[0] + space, field_y + min(size) // 8 * i[1] + space, min(size) // 8 - space, min(size) // 8 - space))
+
+                    field[selected_figure[1][1]][selected_figure[1][0]] = selected_figure[0]
+                    field[i[1]][i[0]] = figure_under_highlight
 
                     # Если кликнули на клетку с возможным ходом, выполняем ход
-                    if rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and field[i[1]][i[0]][0] != selected_figure[0][0] and not game_is_over:
+                    if rect != '' and rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and field[i[1]][i[0]][0] != selected_figure[0][0] and not game_is_over:
                         print(selected_figure[0], i[0], i[1])
                         try:
                             # Если на клетке оказался король, завершаем игру
@@ -526,9 +531,9 @@ while True:
             sc.blit(White_won, (field_x, field_y))
         else:
             sc.blit(Black_won, (field_x, field_y))
-        sc.blit(Close, (field_x + min(size) // 16 * 12.5, field_y + min(size) // 16 * 2.5))  # Выводим крести для закрытия окна с результатом
+        sc.blit(Close, (field_x + min(size) // 16 * 12.5, field_y + min(size) // 16 * 2.5))  # Выводим крестик для закрытия окна с результатом
         close_rect = pygame.Rect(field_x + min(size) // 16 * 12.5, field_y + min(size) // 16 * 2.5, min(size) // 15, min(size) // 15)
-        if close_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:  # проверяем крести на нажатие
+        if close_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:  # проверяем крестик на нажатие
             winning_window_opened = False  # Закрываем окно с результатами
             size = (0, 0)  # изменяем разммер для обновления поля
 

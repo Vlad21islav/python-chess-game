@@ -25,7 +25,7 @@
 </ul>
 
 <img src="images/screenshots/1.png" />
-<h4>Possible moves turn red, which indicates the danger of the king.</h4>
+<h4>You can go only on the place, which will save the king.</h4>
 <img src="images/screenshots/2.png" />
 <h4>Castling is possible.</h4>
 <img src="images/screenshots/3.png" />
