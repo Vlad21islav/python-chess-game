@@ -374,8 +374,22 @@ while True:
                     # Рисуем выделение клетки если они безопасные
                     rect = ''
                     figure_under_highlight = field[i[1]][i[0]]
-                    field[selected_figure[1][1]][selected_figure[1][0]] = figure_under_highlight
-                    field[i[1]][i[0]] = selected_figure[0]
+                    castling = False
+                    if selected_figure[0][2:] == 'King' and field[i[1]][i[0]][2:] == 'Rook':
+                        castling = True
+                        if i[0] == 0:
+                            field[y][2] = selected_figure[0]
+                            field[selected_figure[1][1]][selected_figure[1][0]] = '.'
+                            field[y][3] = field[y][x]
+                            field[y][x] = '.'
+                        elif i[0] == 7:
+                            field[y][6] = selected_figure[0]
+                            field[selected_figure[1][1]][selected_figure[1][0]] = '.'
+                            field[y][5] = field[y][x]
+                            field[y][x] = '.'
+                    else:
+                        field[selected_figure[1][1]][selected_figure[1][0]] = '.'
+                        field[i[1]][i[0]] = selected_figure[0]
 
                     king = [0, 0]
 
@@ -393,11 +407,24 @@ while True:
                     if field[selected_figure[1][1]][selected_figure[1][0]] == field[i[1]][i[0]] or not is_under_attack():
                         rect = pygame.draw.rect(sc, color, (field_x + min(size) // 8 * i[0] + space, field_y + min(size) // 8 * i[1] + space, min(size) // 8 - space, min(size) // 8 - space))
 
-                    field[selected_figure[1][1]][selected_figure[1][0]] = selected_figure[0]
-                    field[i[1]][i[0]] = figure_under_highlight
+                    if castling:
+                        if i[0] == 0:
+                            field[selected_figure[1][1]][3] = '.'
+                            field[selected_figure[1][1]][2] = '.'
+                            field[selected_figure[1][1]][selected_figure[1][0]] = selected_figure[0]
+                            field[i[1]][i[0]] = figure_under_highlight
+                        elif i[0] == 7:
+                            field[selected_figure[1][1]][6] = '.'
+                            field[selected_figure[1][1]][5] = '.'
+                            field[selected_figure[1][1]][selected_figure[1][0]] = selected_figure[0]
+                            field[i[1]][i[0]] = figure_under_highlight
+                    else:
+                        field[selected_figure[1][1]][selected_figure[1][0]] = selected_figure[0]
+                        field[i[1]][i[0]] = figure_under_highlight
 
                     # Если кликнули на клетку с возможным ходом, выполняем ход
-                    if rect != '' and rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and field[i[1]][i[0]][0] != selected_figure[0][0] and not game_is_over:
+                    if (field[selected_figure[1][1]][selected_figure[1][0]] != field[i[1]][i[0]] and rect != ''
+                            and rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0] and field[i[1]][i[0]][0] != selected_figure[0][0] and not game_is_over):
                         print(selected_figure[0], i[0], i[1])
                         try:
                             # Если на клетке оказался король, завершаем игру
@@ -527,6 +554,7 @@ while True:
 
     # Если игра закончена, отображаем окно с результатом
     if winning_window_opened:
+        game_is_over = True
         if who_won == 'W':
             sc.blit(White_won, (field_x, field_y))
         else:
