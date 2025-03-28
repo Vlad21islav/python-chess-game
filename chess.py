@@ -18,7 +18,7 @@ def resource_path(relative_path):
 
 # Установка заголовка окна и иконки
 pygame.display.set_caption('Chess')
-icon = pygame.image.load(resource_path('images/icon.jpg')).convert_alpha()  # Загрузка иконки
+icon = pygame.image.load(resource_path('images/icon.png')).convert_alpha()  # Загрузка иконки
 pygame.display.set_icon(icon)
 
 # Инициализация переменных
