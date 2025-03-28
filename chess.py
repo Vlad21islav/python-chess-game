@@ -135,9 +135,9 @@ def possible_moves(figure):
             ]
 
             # Логика рокировки
-            if not figure_moved['King'][figure[0]] and field[y][5] == '.' and field[y][6] == '.' and not figure_moved['Rook'][figure[0]][1]:
+            if not figure_moved['King'][figure[0]] and field[y][5] == '.' and field[y][6] == '.' and field[y][6] == 'Rook' and not figure_moved['Rook'][figure[0]][1]:
                 highlighted.append([7, y])  # Рокировка на правый фланг
-            if not figure_moved['King'][figure[0]] and field[y][3] == '.' and field[y][2] == '.' and field[y][1] == '.' and not figure_moved['Rook'][figure[0]][0]:
+            if not figure_moved['King'][figure[0]] and field[y][3] == '.' and field[y][2] == '.' and field[y][1] == '.' and field[y][0] == 'Rook' and not figure_moved['Rook'][figure[0]][0]:
                 highlighted.append([0, y])  # Рокировка на левый фланг
 
             # Проверка возможных ходов
@@ -369,8 +369,8 @@ while True:
             # Отображаем возможные ходы фигуры
             for i in highlighted:
                 if (i[0], i[1]) == (x, y):
-                    color = 'green'  # свободная клетка зелёная
-
+                    color = (70, 88, 102)
+                    separator_color = (29, 32, 37)
                     # Рисуем выделение клетки если они безопасные
                     rect = ''
                     figure_under_highlight = field[i[1]][i[0]]
@@ -405,7 +405,20 @@ while True:
                         enemy_turn = 'W'
 
                     if field[selected_figure[1][1]][selected_figure[1][0]] == field[i[1]][i[0]] or not is_under_attack():
-                        rect = pygame.draw.rect(sc, color, (field_x + min(size) // 8 * i[0] + space, field_y + min(size) // 8 * i[1] + space, min(size) // 8 - space, min(size) // 8 - space))
+                        rect = pygame.Rect((field_x + min(size) // 8 * i[0] + space, field_y + min(size) // 8 * i[1] + space, min(size) // 8 - space, min(size) // 8 - space))
+                        if figure_under_highlight == '.':
+                            pygame.draw.circle(sc, color,
+                                (field_x + min(size) // 8 * i[0] + space + (min(size) // 8 - space) // 2, field_y + min(size) // 8 * i[1] + space + (min(size) // 8 - space) // 2), space * 2)
+                            pygame.draw.circle(sc, separator_color,
+                                (field_x + min(size) // 8 * i[0] + space + (min(size) // 8 - space) // 2, field_y + min(size) // 8 * i[1] + space + (min(size) // 8 - space) // 2), space * 2, space // 4)
+                        elif selected_figure[1][1] == i[1] and selected_figure[1][0] == i[0]:
+                            pygame.draw.rect(sc, separator_color,
+                                (field_x + min(size) // 8 * i[0] + space, field_y + min(size) // 8 * i[1] + space, min(size) // 8 - space, min(size) // 8 - space), space // 2)
+                        else:
+                            pygame.draw.circle(sc, color,
+                                (field_x + min(size) // 8 * i[0] + space + (min(size) // 8 - space) // 2, field_y + min(size) // 8 * i[1] + space + (min(size) // 8 - space) // 2), (min(size) // 8 - space) // 2 - 1, space // 2)
+                            pygame.draw.circle(sc, separator_color,
+                                (field_x + min(size) // 8 * i[0] + space + (min(size) // 8 - space) // 2, field_y + min(size) // 8 * i[1] + space + (min(size) // 8 - space) // 2), (min(size) // 8 - space) // 2 - 1, space // 4)
 
                     if castling:
                         if i[0] == 0:
