@@ -134,10 +134,11 @@ def possible_moves(figure):
                 [1, 0], [-1, 0], [0, 1], [0, -1]
             ]
 
+            print(field[y][7], field[y][0], turn + '_' + 'Rook')
             # Логика рокировки
-            if not figure_moved['King'][figure[0]] and field[y][5] == '.' and field[y][6] == '.' and field[y][6] == 'Rook' and not figure_moved['Rook'][figure[0]][1]:
+            if not figure_moved['King'][figure[0]] and field[y][5] == '.' and field[y][6] == '.' and field[y][7] == turn + '_' + 'Rook' and not figure_moved['Rook'][figure[0]][1]:
                 highlighted.append([7, y])  # Рокировка на правый фланг
-            if not figure_moved['King'][figure[0]] and field[y][3] == '.' and field[y][2] == '.' and field[y][1] == '.' and field[y][0] == 'Rook' and not figure_moved['Rook'][figure[0]][0]:
+            if not figure_moved['King'][figure[0]] and field[y][3] == '.' and field[y][2] == '.' and field[y][1] == '.' and field[y][0] == turn + '_' + 'Rook' and not figure_moved['Rook'][figure[0]][0]:
                 highlighted.append([0, y])  # Рокировка на левый фланг
 
             # Проверка возможных ходов
